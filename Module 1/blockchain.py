@@ -16,10 +16,10 @@ class Blockchain:
         self.create_block(proof = 1, previous_hash = '0')
         
     def create_block(self, proof, previous_hash):
-        block = {'index' : len(self.chain) +1,
+        block = {'index': len(self.chain) +1,
                  'timestamp': str(datetime.datetime.now()),
-                 'proof' : proof,
-                 'previous_hash' : previous_hash}
+                 'proof': proof,
+                 'previous_hash': previous_hash}
         self.chain.append(block)
         return block
     
@@ -35,7 +35,7 @@ class Blockchain:
                 check_proof = True
             else:
                 new_proof += 1
-        return new_proof;
+        return new_proof
     
     def hash(self, block):
         encoded_block = json.dumps(block, sort_keys = True).encode()
@@ -67,9 +67,9 @@ app = Flask(__name__)
 blockchain = Blockchain()
 
 # Mining a new block 
-@app.route( '/mine_block', methods=['GET'] )
-def login():
-    previous_block = blockchain.get_previous_block
+@app.route ( '/mine_block', methods=['GET'] )
+def mine_block():
+    previous_block = blockchain.get_previous_block()
     previous_proof = previous_block['proof']
     proof = blockchain.proof_of_work(previous_proof)
     previous_hash = blockchain.hash(previous_block)
@@ -79,3 +79,23 @@ def login():
                 'timestamp': block['timestamp'],
                 'proof': block['proof']}
     return jsonify(response), 200
+
+# Getting all blocks
+@app.route  ('/get_chain', methods=['GET'])
+def get_chain():
+    response = {'chain': blockchain.chain,
+                'length': len(blockchain.chain)}
+    return jsonify(response), 200
+
+# Checking if the block is valid
+@app.route ('/is_chain_valid', methods=['GET'] )
+def is_valid():
+    identifier = blockchain.is_chain_valid(blockchain.chain)
+    if identifier:
+        response = {'message' : 'All good. Blockchain is valid'}
+    else:
+        response = {'message' : 'The blockchain is not valid'}
+    return jsonify(response), 200
+
+# Running the application
+app.run( host = '0.0.0.0', port = 5000)
