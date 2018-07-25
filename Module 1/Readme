@@ -1,0 +1,10 @@
+This module is about creating a blockchain that can be mined. 
+
+The problem in this blockchain is that the generated SHA256 hash should have four leading zeros.
+
+I have used the previous hash to calculate the nuance of the blocks that should be mined.
+
+Verfication of the blockchain is done by calculating the hash of the previous block and comparing to the previous_hash value present in
+the current block and also verifying if the hash of present proof has four leading zeroes.
+
+It has basic api's to mine a block, get all blocks of the chain and to check if the blockchian is valid.
